@@ -1,0 +1,318 @@
+{
+	"info": {
+		"_postman_id": "eaacc0e3-9e81-47e5-835f-a73ad060d45b",
+		"name": "ServiceNow ",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create service incident",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify Status code is 201 and string comparison\", function () {",
+							"",
+							"    pm.response.to.have.status(201)",
+							"    pm.expect(pm.response.text()).to.include(\"number\");",
+							"    pm.expect(pm.response.text()).to.include(\"inquiry\");",
+							"    res = pm.response.json();",
+							"    pm.globals.set(\"sysid\", res.result.sys_id);",
+							"    console.log(res.result.sys_id);",
+							"    ",
+							"   ",
+							"",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"",
+							"pm.globals.unset(\"sysid\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"Mac is not working\",\n    \"short_description\": \"mac issue\",\n    \"urgency\": \"2\",\n    \"impact\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}/api/now/table/incident",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"now",
+						"table",
+						"incident"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetSysid ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"  ",
+							"    if(pm.response.to.have.status(200));",
+							"    var jsondata = pm.response.json();",
+							"    pm.expect(jsondata.result.sys_id).to.equals(pm.globals.get(\"sysid\"))",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}/api/now/table/incident/{{sysid}}",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"now",
+						"table",
+						"incident",
+						"{{sysid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Put service incident",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 and compare the modify string\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    var jsondata= pm.response.json();",
+							"    pm.expect(jsondata.result.sys_id).to.equals(pm.globals.get(\"sysid\"));",
+							"    pm.expect(jsondata.result.short_description).to.equals(\"mac has serious issue\");",
+							"    pm.expect(jsondata.result.urgency).to.equals(\"1\");",
+							"",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"short_description\": \"mac has serious issue\",\n    \"urgency\": \"1\"\n    \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}/api/now/table/incident/{{sysid}}",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"now",
+						"table",
+						"incident",
+						"{{sysid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Patch Service incident",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    var jsondata= pm.response.json();",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(jsondata.result.urgency).to.equals(\"2\");",
+							"    pm.expect(jsondata.result.description).to.equals(\"Mac is not working as expected\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"Mac is not working as expected\",\n    \"urgency\": \"2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}/api/now/table/incident/{{sysid}}",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"now",
+						"table",
+						"incident",
+						"{{sysid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetSysid with param",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}/api/now/table/incident?urgency=1&sysparm_query=sys_created_onONToday@javascript:gs.beginningOfToday()@javascript:gs.endOfToday()&sysparm_limit=10",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"now",
+						"table",
+						"incident"
+					],
+					"query": [
+						{
+							"key": "urgency",
+							"value": "1"
+						},
+						{
+							"key": "sysparm_query",
+							"value": "sys_created_onONToday@javascript:gs.beginningOfToday()@javascript:gs.endOfToday()"
+						},
+						{
+							"key": "sysparm_limit",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "t8CLE/z9v-Pq",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "admin",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
